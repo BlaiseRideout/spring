@@ -10,7 +10,7 @@ static gboolean handle_keypress(GtkWidget *widget, GtkWidget *ev, gpointer data)
 static gboolean killevent(GtkWidget *widget, GtkWidget *ev, gpointer data);
 
 static gboolean
-enter_callback(GtkWidget *widget, GtkWidget *entry) {
+enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
     gchar *entry_text;
     entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
     printf("Entry contents: %s\n", entry_text);
@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
     /* Signal handling */
     g_signal_connect(window, "delete-event", G_CALLBACK(killevent), NULL);
     g_signal_connect(window, "key-press-event", G_CALLBACK(handle_keypress), NULL);
-    gtk_signal_connect(GTK_OBJECT(textbox), "activate", GTK_SIGNAL_FUNC(enter_callback), textbox);
+    g_signal_connect(textbox, "activate", G_CALLBACK(enter_callback), textbox);
 
     gtk_widget_show(textbox);
     gtk_widget_show_all(window);
