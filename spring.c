@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_size_request(window, 800, 30);
     gtk_container_set_border_width(GTK_CONTAINER(window), 0);
+    gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
     gtk_widget_show_all(window);
 
