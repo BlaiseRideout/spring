@@ -11,14 +11,13 @@ static gboolean enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer dat
 static void execute(char *str);
 static gboolean handle_keypress(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static gboolean killevent(GtkWidget *widget, GtkWidget *ev, gpointer data);
+static char** split_string(char *str);
 
 static gboolean
 enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
     char *entry_text;
 
     entry_text = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
-    printf("Entry contents: %s\n", entry_text);
-
     execute(entry_text);
 
     return FALSE;
@@ -26,11 +25,18 @@ enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
 
 static void
 execute(char *str) {
+    char **splitstring;
+
     if (!str)
         return;
 
-    if (fork() == 0) {
 
+    splitstring = split_string(str);
+    /* free(str); */
+
+    if (fork() == 0) {
+        printf("Launching: %s with args %s and %s\n", splitstring[0], splitstring[1], splitstring[2]);
+        execvp(splitstring[0], splitstring);
     }
 
     exit(0);
@@ -46,6 +52,18 @@ static gboolean
 killevent(GtkWidget *widget, GtkWidget *ev, gpointer data) {
     gtk_main_quit ();
     return FALSE;
+}
+
+static char**
+split_string(char *str) {
+    char **ret;
+    int i;
+
+    ret = malloc(sizeof(char**) * 32);
+    ret[0] = strtok(str, " ");
+    for (i = 1; (ret[i] = strtok(NULL, " ")); ++i);
+
+    return ret;
 }
 
 int main(int argc, char **argv) {
