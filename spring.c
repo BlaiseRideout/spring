@@ -6,6 +6,14 @@
 static GtkWidget *window;
 static GtkWidget *textEntry;
 
+static gboolean delete(GtkWidget *widget, GtkWidget *ev, gpointer data);
+
+static gboolean
+delete(GtkWidget *widget, GtkWidget *ev, gpointer data) {
+    gtk_main_quit ();
+    return FALSE;
+}
+
 int main(int argc, char **argv) {
     gtk_init(&argc, &argv);
 
@@ -13,6 +21,9 @@ int main(int argc, char **argv) {
     gtk_widget_set_size_request(window, 800, 30);
     gtk_container_set_border_width(GTK_CONTAINER(window), 0);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
+
+    g_signal_connect(window, "delete-event", G_CALLBACK(delete), NULL);
+    /* g_signal_connect(window, "key-press-event", G_CALLBACK(handle_keypress), NULL); */
 
     gtk_widget_show_all(window);
 
