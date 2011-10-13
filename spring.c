@@ -2,19 +2,38 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 static GtkWidget *window;
 static GtkWidget *textbox;
 
+static gboolean enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data);
+static void execute(char *str);
 static gboolean handle_keypress(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static gboolean killevent(GtkWidget *widget, GtkWidget *ev, gpointer data);
 
 static gboolean
 enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
-    gchar *entry_text;
-    entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
+    char *entry_text;
+
+    entry_text = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
     printf("Entry contents: %s\n", entry_text);
+
+    execute(entry_text);
+
     return FALSE;
+}
+
+static void
+execute(char *str) {
+    if (!str)
+        return;
+
+    if (fork() == 0) {
+
+    }
+
+    exit(0);
 }
 
 static gboolean
