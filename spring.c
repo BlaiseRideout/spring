@@ -15,7 +15,7 @@ static void errout(int status, char *str);
 static void fill_bin_list(void);
 static gboolean handle_keypress(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static gboolean killevent(GtkWidget *widget, GtkWidget *ev, gpointer data);
-static char** split_string(char *str);
+static char** split_string(char *str, char *delim, unsigned int maxtok);
 
 static gboolean
 enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
@@ -26,7 +26,7 @@ enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
     if (!from_field)
         return FALSE;
 
-    splitstring = split_string(from_field);
+    splitstring = split_string(from_field, " ", MAXARGS);
 
     if (fork() == 0) {
         execvp(splitstring[0], splitstring);
@@ -66,13 +66,13 @@ killevent(GtkWidget *widget, GtkWidget *ev, gpointer data) {
 }
 
 static char**
-split_string(char *str) {
-    char *tmp[MAXARGS];
+split_string(char *str, char *delim, unsigned int maxtok) {
+    char *tmp[maxtok];
     char **ret;
     int i;
 
-    tmp[0] = strtok(str, " ");
-    for (i = 1; (tmp[i] = strtok(NULL, " ")) && i < MAXARGS; ++i);
+    tmp[0] = strtok(str, delim);
+    for (i = 1; (tmp[i] = strtok(NULL, delim)) && i < MAXARGS; ++i);
 
     if (i == MAXARGS)
         errout(1, "Too many args given");
