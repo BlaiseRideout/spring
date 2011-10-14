@@ -15,7 +15,7 @@ static void errout(int status, char *str);
 static void fill_bin_list(void);
 static gboolean handle_keypress(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static gboolean killevent(GtkWidget *widget, GtkWidget *ev, gpointer data);
-static char** split_string(char *str, char *delim, unsigned int maxtok);
+static char** split_string(char *str, char *delim);
 static int tok_count(char *str, char *delim);
 
 static gboolean
@@ -28,7 +28,7 @@ enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
     if (!from_field)
         return FALSE;
 
-    splitstring = split_string(from_field, " ", MAXARGS);
+    splitstring = split_string(from_field, " ");
 
     if (fork() == 0) {
         execvp(splitstring[0], splitstring);
@@ -69,7 +69,7 @@ fill_bin_list(void) {
     strcpy(PATH, ORIGPATH);
 
     printf("Found $PATH to be: %s\n", PATH);
-    binlist = split_string(PATH, ":", 1024);
+    binlist = split_string(PATH, ":");
 
     for (i = 0; binlist[i]; ++i)
         printf("Path part %d: %s\n", i, binlist[i]);
@@ -90,7 +90,7 @@ killevent(GtkWidget *widget, GtkWidget *ev, gpointer data) {
 }
 
 static char**
-split_string(char *str, char *delim, unsigned int maxtok) {
+split_string(char *str, char *delim) {
     char **ret;
     int numtok;
     int i;
@@ -110,13 +110,14 @@ split_string(char *str, char *delim, unsigned int maxtok) {
     return ret;
 }
 
+/* Determines the number of tokens that strtok() will return */
 static int
 tok_count(char *str, char *delim) {
     int i, e;
     int ret;
     int delims;
 
-    ret = 0;
+    ret = 1;
     delims = strlen(delim);
 
     for(i = 0; i < strlen(str); ++i) {
@@ -135,7 +136,7 @@ tok_count(char *str, char *delim) {
         }
     }
 
-    return ++ret;
+    return ret;
 }
 
 int main(int argc, char **argv) {
