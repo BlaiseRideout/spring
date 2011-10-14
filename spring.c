@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAXARGS 32
-
 static GtkWidget *window;
 static GtkWidget *textbox;
 static char **binlist;
