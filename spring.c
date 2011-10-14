@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAXARGS 32
+
 static GtkWidget *window;
 static GtkWidget *textbox;
 static char **binlist;
@@ -32,6 +34,7 @@ enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
     }
 
     free(from_field);
+    free(splitstring);
     exit(0);
 
     return FALSE;
@@ -47,6 +50,7 @@ errout(int status, char *str) {
 
 static void
 fill_bin_list(void) {
+    printf("Found $PATH to be: %s\n", getenv("PATH"));
 }
 
 static gboolean
@@ -63,16 +67,23 @@ killevent(GtkWidget *widget, GtkWidget *ev, gpointer data) {
 
 static char**
 split_string(char *str) {
+    char *tmp[MAXARGS];
     char **ret;
     int i;
 
-    /* TODO: Sort this magic number out */
-    ret = malloc(sizeof(char*) * 32);
-    if (!ret[0])
-        return ret;
+    tmp[0] = strtok(str, " ");
+    for (i = 1; (tmp[i] = strtok(NULL, " ")) && i < MAXARGS; ++i);
 
-    ret[0] = strtok(str, " ");
-    for (i = 1; (ret[i] = strtok(NULL, " ")); ++i);
+    if (i == MAXARGS)
+        errout(1, "Too many args given");
+
+    ret = malloc(sizeof(char*) * ++i);
+    if (!ret)
+        errout(1, "Error allocating space for tokens!");
+
+    for (i = 0; tmp[i]; ++i)
+        ret[i] = tmp[i];
+    ret[i] = NULL;
 
     return ret;
 }
