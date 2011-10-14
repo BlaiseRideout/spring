@@ -91,30 +91,40 @@ killevent(GtkWidget *widget, GtkWidget *ev, gpointer data) {
 
 static char**
 split_string(char *str, char *delim, unsigned int maxtok) {
-    char *tmp[maxtok];
     char **ret;
+    int numtok;
     int i;
 
-    tmp[0] = strtok(str, delim);
-    for (i = 1; (tmp[i] = strtok(NULL, delim)) && i < MAXARGS; ++i);
-
-    if (i == MAXARGS)
-        puts("Split_string() ran out of stack space: continuing with reduced number of values.");
-
-    ret = malloc(sizeof(char*) * ++i);
+    numtok = tok_count(str, delim) + 1;
+    ret = malloc(sizeof(char*) * numtok);
     if (!ret)
         errout(1, "Error allocating space for tokens!");
 
-    for (i = 0; tmp[i]; ++i)
-        ret[i] = tmp[i];
-    ret[i] = NULL;
+    ret[0] = strtok(str, delim);
+    for (i = 1; (ret[i] = strtok(NULL, delim)); ++i);
+
+    /* If we reach our hard limit we *must* make sure we're NULL-terminated */
+    if (i == numtok)
+        ret[--i] = NULL;
 
     return ret;
 }
 
 static int
 tok_count(char *str, char *delim) {
-    return 0;
+    int i;
+    int ret;
+    int delims;
+
+    ret = 1;
+    delims = strlen(delim);
+
+    for (i = 0; str[i] != '\0'; ++i) {
+        if (str[i] == delim[0])
+            ret++;
+    }
+
+    return ret;
 }
 
 int main(int argc, char **argv) {
