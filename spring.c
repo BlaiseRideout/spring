@@ -8,6 +8,7 @@ static GtkWidget *window;
 static GtkWidget *textbox;
 
 static gboolean enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data);
+static void errout(int status, char *str);
 static void execute(char *str);
 static gboolean handle_keypress(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static gboolean killevent(GtkWidget *widget, GtkWidget *ev, gpointer data);
@@ -24,6 +25,14 @@ enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
 }
 
 static void
+errout(int status, char *str) {
+    if (str)
+        puts(str);
+
+    exit(status);
+}
+
+static void
 execute(char *str) {
     char **splitstring;
 
@@ -34,7 +43,7 @@ execute(char *str) {
 
     if (fork() == 0) {
         execvp(splitstring[0], splitstring);
-        exit(0);
+        errout(1, "Execvp failed.");
     }
 
     exit(0);
@@ -72,7 +81,7 @@ int main(int argc, char **argv) {
 
     /* Window widget */
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_widget_set_size_request(window, 800, 30);
+    gtk_widget_set_size_request(window, 800, 0);
     gtk_container_set_border_width(GTK_CONTAINER(window), 0);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
