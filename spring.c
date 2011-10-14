@@ -16,6 +16,7 @@ static void fill_bin_list(void);
 static gboolean handle_keypress(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static gboolean killevent(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static char** split_string(char *str, char *delim, unsigned int maxtok);
+static int tok_count(char *str, char *delim);
 
 static gboolean
 enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
@@ -109,6 +110,11 @@ split_string(char *str, char *delim, unsigned int maxtok) {
     ret[i] = NULL;
 
     return ret;
+}
+
+static int
+tok_count(char *str, char *delim) {
+    return 0;
 }
 
 int main(int argc, char **argv) {
