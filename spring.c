@@ -9,17 +9,28 @@ static GtkWidget *textbox;
 
 static gboolean enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data);
 static void errout(int status, char *str);
-static void execute(char *str);
 static gboolean handle_keypress(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static gboolean killevent(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static char** split_string(char *str);
 
 static gboolean
 enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
-    char *entry_text;
+    char *from_field;
+    char **splitstring;
 
-    entry_text = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
-    execute(entry_text);
+    from_field = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
+    if (!from_field)
+        return FALSE;
+
+    splitstring = split_string(from_field);
+
+    if (fork() == 0) {
+        execvp(splitstring[0], splitstring);
+        errout(1, "Execvp failed.");
+    }
+
+    free(from_field);
+    exit(0);
 
     return FALSE;
 }
@@ -30,23 +41,6 @@ errout(int status, char *str) {
         puts(str);
 
     exit(status);
-}
-
-static void
-execute(char *str) {
-    char **splitstring;
-
-    if (!str)
-        return;
-
-    splitstring = split_string(str);
-
-    if (fork() == 0) {
-        execvp(splitstring[0], splitstring);
-        errout(1, "Execvp failed.");
-    }
-
-    exit(0);
 }
 
 static gboolean
