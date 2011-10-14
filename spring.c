@@ -112,7 +112,7 @@ split_string(char *str, char *delim, unsigned int maxtok) {
 
 static int
 tok_count(char *str, char *delim) {
-    int i;
+    int i, e;
     int ret;
     int delims;
 
@@ -120,8 +120,12 @@ tok_count(char *str, char *delim) {
     delims = strlen(delim);
 
     for (i = 0; str[i] != '\0'; ++i) {
-        if (str[i] == delim[0])
-            ret++;
+        for (e = 0; e < delims; ++e) {
+            if (str[i] == delim[e]) {
+                ret++;
+                break;
+            }
+        }
     }
 
     return ret;
