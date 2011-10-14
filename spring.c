@@ -21,6 +21,7 @@ static gboolean
 enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
     char *from_field;
     char **splitstring;
+    int i;
 
     from_field = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
     if (!from_field)
@@ -30,7 +31,11 @@ enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
 
     if (fork() == 0) {
         execvp(splitstring[0], splitstring);
-        errout(1, "Execvp failed.");
+        printf("Execvp failed when attempting to launch ");
+        for (i = 0; splitstring[i]; ++i)
+            printf("%s ", splitstring[i]);
+        puts("");
+        exit(1);
     }
 
     free(from_field);
@@ -50,7 +55,25 @@ errout(int status, char *str) {
 
 static void
 fill_bin_list(void) {
-    printf("Found $PATH to be: %s\n", getenv("PATH"));
+    char *ORIGPATH;
+    char *PATH;
+    int i;
+    
+    /* If we don't do this strtok modifies the environmental variable "PATH" in place and */
+    /* messes up the program's ability to execute commands */
+    ORIGPATH = getenv("PATH");
+    PATH = malloc(strlen(ORIGPATH) + 1);
+    if (!PATH)
+        errout(1, "Failed to allocate space for in-place PATH chopping.");
+    strcpy(PATH, ORIGPATH);
+
+    printf("Found $PATH to be: %s\n", PATH);
+    binlist = split_string(PATH, ":", 1024);
+
+    for (i = 0; binlist[i]; ++i)
+        printf("Path part %d: %s\n", i, binlist[i]);
+
+    free(PATH);
 }
 
 static gboolean
@@ -75,7 +98,7 @@ split_string(char *str, char *delim, unsigned int maxtok) {
     for (i = 1; (tmp[i] = strtok(NULL, delim)) && i < MAXARGS; ++i);
 
     if (i == MAXARGS)
-        errout(1, "Too many args given");
+        puts("Split_string() ran out of stack space: continuing with reduced number of values.");
 
     ret = malloc(sizeof(char*) * ++i);
     if (!ret)
