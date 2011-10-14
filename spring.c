@@ -80,7 +80,7 @@ fill_bin_list(void) {
             /* Conditions under which we would not use the file name */
             /* If it is "." or ".." */
             if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
-                break;
+                continue;
 
             /* Logic for dealing with found folders */
             printf("- - - > %s\n", dir->d_name);
