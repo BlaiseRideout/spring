@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <dirent.h>
 
 static GtkWidget *window;
 static GtkWidget *textbox;
@@ -37,8 +38,8 @@ enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
         exit(1);
     }
 
-    free(from_field);
-    free(splitstring);
+    /* free(from_field); */
+    g_free(splitstring);
     exit(0);
 
     return FALSE;
@@ -56,6 +57,8 @@ static void
 fill_bin_list(void) {
     char *ORIGPATH;
     char *PATH;
+    DIR *d;
+    struct dirent *dir;
     int i;
     
     /* If we don't do this strtok modifies the environmental variable "PATH" in place and */
@@ -69,8 +72,22 @@ fill_bin_list(void) {
     printf("Found $PATH to be: %s\n", PATH);
     binlist = split_string(PATH, ":");
 
-    for (i = 0; binlist[i]; ++i)
+    for (i = 0; binlist[i]; ++i) {
         printf("Path part %d: %s\n", i, binlist[i]);
+
+        d = opendir(binlist[i]);
+        while ((dir = readdir(d))) {
+            /* Conditions under which we would not use the file name */
+            /* If it is "." or ".." */
+            if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
+                break;
+
+            /* Logic for dealing with found folders */
+            printf("- - - > %s\n", dir->d_name);
+        }
+
+        closedir(d);
+    }
 
     free(PATH);
 }
@@ -121,10 +138,11 @@ tok_count(char *str, char *delim) {
     for(i = 0; i < strlen(str); ++i) {
         /* Set e to any value but == delims if we're still counting towards one token */
         for (e = 0; e < delims && str[i] != delim[e]; ++e);
-        /* Handle any fast-forwarding we need to do */
+        /* If we found a delim character in this space */
         if (e != delims) {
             ++ret;
             ++i;
+            /* Handle any fast-forwarding we need to do */
             for (e = 0; e < delims; ++e) {
                 if (str[i] == delim[e]) {
                     e = 0;
@@ -142,7 +160,7 @@ int main(int argc, char **argv) {
 
     /* Window widget */
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_widget_set_size_request(window, 800, 20);
+    gtk_widget_set_size_request(window, 800, 10);
     gtk_container_set_border_width(GTK_CONTAINER(window), 0);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
