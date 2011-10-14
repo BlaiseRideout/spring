@@ -104,9 +104,8 @@ split_string(char *str, char *delim) {
     for (i = 1; i < numtok; ++i)
         ret[i] = strtok(NULL, delim);
 
-    /* If we reach our hard limit we *must* make sure we're NULL-terminated */
-    if (i == numtok)
-        ret[--i] = NULL;
+    if (ret[--i] != NULL)
+        errout(1, "split_string() return value not NULL-terminated. tok_count() error?");
 
     return ret;
 }
