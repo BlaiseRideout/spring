@@ -192,7 +192,8 @@ int main(int argc, char **argv) {
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
     /* Text entry widget */
-    textbox = gtk_entry_new();
+    /* textbox = gtk_entry_new(); */
+    textbox = gtk_combo_box_text_new_with_entry();
     gtk_container_add(GTK_CONTAINER (window), textbox);
 
     /* Signal handling */
