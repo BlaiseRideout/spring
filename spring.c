@@ -18,6 +18,7 @@ enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
     char *entry_text;
 
     entry_text = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
+    printf("Received input: %s\n", entry_text);
     execute(entry_text);
 
     return FALSE;
@@ -30,13 +31,11 @@ execute(char *str) {
     if (!str)
         return;
 
-
     splitstring = split_string(str);
-    /* free(str); */
 
     if (fork() == 0) {
-        printf("Launching: %s with args %s and %s\n", splitstring[0], splitstring[1], splitstring[2]);
         execvp(splitstring[0], splitstring);
+        exit(0);
     }
 
     exit(0);
@@ -59,7 +58,10 @@ split_string(char *str) {
     char **ret;
     int i;
 
-    ret = malloc(sizeof(char**) * 32);
+    ret = malloc(sizeof(char*) * 32);
+    if (!ret[0])
+        return ret;
+
     ret[0] = strtok(str, " ");
     for (i = 1; (ret[i] = strtok(NULL, " ")); ++i);
 
