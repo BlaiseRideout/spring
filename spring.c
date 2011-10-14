@@ -116,19 +116,26 @@ tok_count(char *str, char *delim) {
     int ret;
     int delims;
 
-    ret = 1;
+    ret = 0;
     delims = strlen(delim);
 
-    for (i = 0; str[i] != '\0'; ++i) {
-        for (e = 0; e < delims; ++e) {
-            if (str[i] == delim[e]) {
-                ret++;
-                break;
+    for(i = 0; i < strlen(str); ++i) {
+        /* Set e to any value but == delims if we're still counting towards one token */
+        for (e = 0; e < delims && str[i] != delim[e]; ++e);
+        /* Handle any fast-forwarding we need to do */
+        if (e != delims) {
+            ++ret;
+            ++i;
+            for (e = 0; e < delims; ++e) {
+                if (str[i] == delim[e]) {
+                    e = 0;
+                    ++i;
+                }
             }
         }
     }
 
-    return ret;
+    return ++ret;
 }
 
 int main(int argc, char **argv) {
