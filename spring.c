@@ -12,40 +12,18 @@ static GtkWidget *window;
 static GtkWidget *textbox;
 static char **binlist;
 
-static gboolean enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data);
+static void cleanup(void);
 static void errout(int status, char *str);
 static void fill_bin_list(void);
 static gboolean handle_keypress(GtkWidget *widget, GdkEventKey *ev, gpointer data);
 static gboolean killevent(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static char** split_string(char *str, char *delim);
+static gboolean text_exec(void);
 static int tok_count(char *str, char *delim);
 
-static gboolean
-enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
-    char *from_field;
-    char **splitstring;
-    int i;
-
-    from_field = (char*)gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(entry));
-    if (!from_field)
-        return FALSE;
-
-    splitstring = split_string(from_field, " ");
-
-    if (fork() == 0) {
-        execvp(splitstring[0], splitstring);
-        printf("Execvp failed when attempting to launch ");
-        for (i = 0; splitstring[i]; ++i)
-            printf("%s ", splitstring[i]);
-        puts("");
-        exit(1);
-    }
-
-    /* free(from_field); */
-    g_free(splitstring);
-    exit(0);
-
-    return FALSE;
+static void
+cleanup(void) {
+    gtk_main_quit();
 }
 
 static void
@@ -124,17 +102,24 @@ fill_bin_list(void) {
 static gboolean
 handle_keypress(GtkWidget *widget, GdkEventKey *event, gpointer data) {
 
-    puts("Ding!");
-
-    if (event->keyval == GDK_Escape)
-        puts("Enter pressed!");
+    if (event->keyval == GDK_Escape) {
+        cleanup();
+        exit(0);
+    }
+    else if (event->keyval == GDK_Return) {
+        if (text_exec())
+            return TRUE;
+        else
+            puts("Exec failed!");
+    }
 
     return FALSE;
 }
 
 static gboolean
 killevent(GtkWidget *widget, GtkWidget *ev, gpointer data) {
-    gtk_main_quit ();
+    cleanup();
+    exit(0);
     return FALSE;
 }
 
@@ -189,6 +174,34 @@ tok_count(char *str, char *delim) {
     return ret;
 }
 
+static gboolean
+text_exec(void) {
+    char *from_field;
+    char **splitstring;
+    int i;
+
+    from_field = (char*)gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(textbox));
+    if (!from_field)
+        return FALSE;
+
+    splitstring = split_string(from_field, " ");
+
+    if (fork() == 0) {
+        execvp(splitstring[0], splitstring);
+        printf("Execvp failed when attempting to launch ");
+        for (i = 0; splitstring[i]; ++i)
+            printf("%s ", splitstring[i]);
+        puts("");
+        exit(1);
+    }
+
+    /* free(from_field); */
+    g_free(splitstring);
+    exit(0);
+
+    return FALSE;
+}
+
 int main(int argc, char **argv) {
     gtk_init(&argc, &argv);
 
@@ -208,7 +221,6 @@ int main(int argc, char **argv) {
     /* Signal handling */
     g_signal_connect(window, "delete-event", G_CALLBACK(killevent), NULL);
     g_signal_connect(window, "key-press-event", G_CALLBACK(handle_keypress), NULL);
-    g_signal_connect(textbox, "activate", G_CALLBACK(enter_callback), textbox);
 
     gtk_widget_show(textbox);
     gtk_widget_show_all(window);
