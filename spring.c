@@ -101,7 +101,8 @@ split_string(char *str, char *delim) {
         errout(1, "Error allocating space for tokens!");
 
     ret[0] = strtok(str, delim);
-    for (i = 1; (ret[i] = strtok(NULL, delim)); ++i);
+    for (i = 1; i < numtok; ++i)
+        ret[i] = strtok(NULL, delim);
 
     /* If we reach our hard limit we *must* make sure we're NULL-terminated */
     if (i == numtok)
