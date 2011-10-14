@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
 static GtkWidget *window;
 static GtkWidget *textbox;
@@ -59,6 +60,7 @@ fill_bin_list(void) {
     char *PATH;
     DIR *d;
     struct dirent *dir;
+    unsigned int bincount = 0;
     int i;
     
     /* If we don't do this strtok modifies the environmental variable "PATH" in place and */
@@ -83,11 +85,14 @@ fill_bin_list(void) {
                 continue;
 
             /* Logic for dealing with found folders */
+            bincount++;
             printf("- - - > %s\n", dir->d_name);
         }
 
         closedir(d);
     }
+
+    printf("Identified %d binary files.\n", bincount);
 
     free(PATH);
 }
