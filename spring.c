@@ -18,7 +18,6 @@ enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data) {
     char *entry_text;
 
     entry_text = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
-    printf("Received input: %s\n", entry_text);
     execute(entry_text);
 
     return FALSE;
