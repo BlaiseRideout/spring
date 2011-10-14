@@ -6,9 +6,11 @@
 
 static GtkWidget *window;
 static GtkWidget *textbox;
+static char **binlist;
 
 static gboolean enter_callback(GtkWidget *widget, GtkWidget *entry, gpointer data);
 static void errout(int status, char *str);
+static void fill_bin_list(void);
 static gboolean handle_keypress(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static gboolean killevent(GtkWidget *widget, GtkWidget *ev, gpointer data);
 static char** split_string(char *str);
@@ -43,6 +45,10 @@ errout(int status, char *str) {
     exit(status);
 }
 
+static void
+fill_bin_list(void) {
+}
+
 static gboolean
 handle_keypress(GtkWidget *widget, GtkWidget *ev, gpointer data) {
 
@@ -60,6 +66,7 @@ split_string(char *str) {
     char **ret;
     int i;
 
+    /* TODO: Sort this magic number out */
     ret = malloc(sizeof(char*) * 32);
     if (!ret[0])
         return ret;
@@ -90,6 +97,8 @@ int main(int argc, char **argv) {
 
     gtk_widget_show(textbox);
     gtk_widget_show_all(window);
+
+    fill_bin_list();
 
     gtk_main();
 
