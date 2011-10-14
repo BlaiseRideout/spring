@@ -58,10 +58,11 @@ static void
 fill_bin_list(void) {
     char *ORIGPATH;
     char *PATH;
+    char **pathparts;
     DIR *d;
     struct dirent *dir;
     unsigned int bincount = 0;
-    int i;
+    int i, e;
     
     /* If we don't do this strtok modifies the environmental variable "PATH" in place and */
     /* messes up the program's ability to execute commands */
@@ -72,27 +73,48 @@ fill_bin_list(void) {
     strcpy(PATH, ORIGPATH);
 
     printf("Found $PATH to be: %s\n", PATH);
-    binlist = split_string(PATH, ":");
+    pathparts = split_string(PATH, ":");
 
-    for (i = 0; binlist[i]; ++i) {
-        printf("Path part %d: %s\n", i, binlist[i]);
-
-        d = opendir(binlist[i]);
+    /* Once through is just for counting */
+    for (i = 0; pathparts[i]; ++i) {
+        d = opendir(pathparts[i]);
         while ((dir = readdir(d))) {
-            /* Conditions under which we would not use the file name */
+            /* If it is "." or ".." */
+            if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
+                continue;
+            bincount++;
+        }
+        closedir(d);
+    }
+
+    printf("Identified %d binary files.\n", bincount);
+    binlist = malloc(sizeof(char*) * ++bincount);
+    if (!binlist)
+        errout(1, "Error allocating space for the binlist.");
+    binlist[--bincount] = NULL;
+
+    /* this time we allocate */
+    for (i = 0, e = 0; pathparts[i]; ++i) {
+        printf("Path part %d: %s\n", i, pathparts[i]);
+
+        d = opendir(pathparts[i]);
+        while ((dir = readdir(d))) {
             /* If it is "." or ".." */
             if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
                 continue;
 
             /* Logic for dealing with found folders */
-            bincount++;
-            printf("- - - > %s\n", dir->d_name);
-        }
+            binlist[e] = malloc(strlen(dir->d_name) + 1);
+            strcpy(binlist[e], dir->d_name);
 
+            ++e;
+        }
         closedir(d);
     }
 
-    printf("Identified %d binary files.\n", bincount);
+    puts("Identified these binary files:");
+    for(i = 0; binlist[i]; ++i)
+        printf("- - - >    %s\n", binlist[i]);
 
     free(PATH);
 }
