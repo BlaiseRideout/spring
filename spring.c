@@ -238,11 +238,11 @@ int main(int argc, char **argv) {
     gtk_container_set_border_width(GTK_CONTAINER(window), 0);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
-    bintree = gtk_list_store_new(1, G_TYPE_STRING, -1);
+    bintree = gtk_list_store_new(1, G_TYPE_STRING);
 
     for (i = 0; binlist[i]; ++i) {
         gtk_list_store_append(bintree, &iter);
-        gtk_list_store_set(bintree, &iter, 0, binlist[i]);
+        gtk_list_store_set(bintree, &iter, 0, binlist[i], -1);
     }
 
     textcompletion = gtk_entry_completion_new();
