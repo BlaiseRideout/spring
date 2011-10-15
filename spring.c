@@ -232,13 +232,12 @@ int main(int argc, char **argv) {
     textcompletion = gtk_entry_completion_new();
     gtk_entry_completion_set_model(textcompletion, GTK_TREE_MODEL(bintree));
     gtk_entry_completion_set_text_column(textcompletion, 0);
+    gtk_entry_completion_set_inline_completion(textcompletion, TRUE);
+    gtk_entry_completion_set_popup_completion(textcompletion, TRUE);
 
     /* Text entry widget */
     textbox = GTK_ENTRY(gtk_entry_new());
-    /* textbox = gtk_combo_box_text_new_with_entry(); */
     gtk_entry_set_completion(textbox, textcompletion);
-    /* gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(textbox), "xterm"); */
-    /* gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(textbox), "chromium"); */
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(textbox));
 
     /* Signal handling */
