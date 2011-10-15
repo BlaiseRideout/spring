@@ -234,6 +234,7 @@ int main(int argc, char **argv) {
     gtk_entry_completion_set_text_column(textcompletion, 0);
     gtk_entry_completion_set_inline_completion(textcompletion, TRUE);
     gtk_entry_completion_set_popup_completion(textcompletion, TRUE);
+    gtk_entry_completion_set_minimum_key_length(textcompletion, 1);
 
     /* Text entry widget */
     textbox = GTK_ENTRY(gtk_entry_new());
