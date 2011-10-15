@@ -11,6 +11,7 @@
 static GtkWidget *window;
 static GtkEntry *textbox;
 static GtkEntryCompletion *textcompletion;
+static GtkListStore *bintree;
 static char **binlist;
 
 static void cleanup(void);
@@ -204,6 +205,8 @@ text_exec(void) {
 }
 
 int main(int argc, char **argv) {
+    GtkTreeIter iter;
+
     gtk_init(&argc, &argv);
 
     /* Window widget */
@@ -212,7 +215,16 @@ int main(int argc, char **argv) {
     gtk_container_set_border_width(GTK_CONTAINER(window), 0);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
+    bintree = gtk_list_store_new(1, G_TYPE_STRING);
+
+    gtk_list_store_append(bintree, &iter);
+    gtk_list_store_set(bintree, &iter, 0, "Test1");
+    gtk_list_store_append(bintree, &iter);
+    gtk_list_store_set(bintree, &iter, 0, "Test2");
+
     textcompletion = gtk_entry_completion_new();
+    gtk_entry_completion_set_model(textcompletion, GTK_TREE_MODEL(bintree));
+    gtk_entry_completion_set_text_column(textcompletion, 0);
 
     /* Text entry widget */
     textbox = GTK_ENTRY(gtk_entry_new());
