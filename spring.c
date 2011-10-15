@@ -9,7 +9,8 @@
 #include <sys/stat.h>
 
 static GtkWidget *window;
-static GtkWidget *textbox;
+static GtkEntry *textbox;
+static GtkEntryCompletion *textcompletion;
 static char **binlist;
 
 static void cleanup(void);
@@ -180,7 +181,7 @@ text_exec(void) {
     char **splitstring;
     int i;
 
-    from_field = (char*)gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(textbox));
+    from_field = (char*)gtk_entry_get_text(textbox);
     if (!from_field)
         return FALSE;
 
@@ -211,18 +212,22 @@ int main(int argc, char **argv) {
     gtk_container_set_border_width(GTK_CONTAINER(window), 0);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
+    textcompletion = gtk_entry_completion_new();
+
     /* Text entry widget */
-    /* textbox = gtk_entry_new(); */
-    textbox = gtk_combo_box_text_new_with_entry();
-    gtk_container_add(GTK_CONTAINER (window), textbox);
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(textbox), "xterm");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(textbox), "chromium");
+    textbox = GTK_ENTRY(gtk_entry_new());
+    /* textbox = gtk_combo_box_text_new_with_entry(); */
+    gtk_entry_set_completion(textbox, textcompletion);
+    /* gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(textbox), "xterm"); */
+    /* gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(textbox), "chromium"); */
+    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(textbox));
 
     /* Signal handling */
     g_signal_connect(window, "delete-event", G_CALLBACK(killevent), NULL);
     g_signal_connect(window, "key-press-event", G_CALLBACK(handle_keypress), NULL);
 
-    gtk_widget_show(textbox);
+    gtk_widget_show(GTK_WIDGET(textbox));
+    gtk_widget_show(GTK_WIDGET(textcompletion));
     gtk_widget_show_all(window);
 
     fill_bin_list();
