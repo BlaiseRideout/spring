@@ -70,7 +70,6 @@ fill_bin_list(void) {
         errout(1, "Failed to allocate space for in-place PATH chopping.");
     strcpy(PATH, ORIGPATH);
 
-    printf("Found $PATH to be: %s\n", PATH);
     pathparts = split_string(PATH, ":");
 
     /* Once through is just for counting */
@@ -85,7 +84,6 @@ fill_bin_list(void) {
         closedir(d);
     }
 
-    printf("Identified %d binary files.\n", bincount);
     binlist = malloc(sizeof(char*) * ++bincount);
     if (!binlist)
         errout(1, "Error allocating space for the binlist.");
@@ -93,8 +91,6 @@ fill_bin_list(void) {
 
     /* this time we allocate */
     for (i = 0, e = 0; pathparts[i]; ++i) {
-        printf("Path part %d: %s\n", i, pathparts[i]);
-
         d = opendir(pathparts[i]);
         while ((dir = readdir(d))) {
             /* If it is "." or ".." */
@@ -110,10 +106,6 @@ fill_bin_list(void) {
         closedir(d);
     }
 
-    puts("Identified these binary files:");
-    for(i = 0; binlist[i]; ++i)
-        printf("- - - >    %s\n", binlist[i]);
-
     free(PATH);
 }
 
@@ -124,16 +116,8 @@ handle_keypress(GtkWidget *widget, GdkEventKey *event, gpointer data) {
         cleanup();
         exit(0);
     }
-    else if (event->keyval == GDK_Return) {
-        if (text_exec())
-            return TRUE;
-        else
-            puts("Exec failed!");
-    }
-    else if (event->keyval == GDK_Tab) {
-
-        return TRUE;
-    }
+    else if (event->keyval == GDK_Return)
+        text_exec();
 
     return FALSE;
 }
@@ -266,5 +250,6 @@ int main(int argc, char **argv) {
 
     gtk_main();
 
+    cleanup();
     return 0;
 }
