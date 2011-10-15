@@ -1,3 +1,19 @@
+/* Copyright (C) 2011 John Anthony */
+/*  */
+/* This program is free software: you can redistribute it and/or modify */
+/* it under the terms of the GNU General Public License as published by */
+/* the Free Software Foundation, either version 3 of the License, or */
+/* (at your option) any later version. */
+/*  */
+/* This program is distributed in the hope that it will be useful, */
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of */
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the */
+/* GNU General Public License for more details. */
+/*  */
+/* You should have received a copy of the GNU General Public License */
+/* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+/*  */
+
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
@@ -114,6 +130,10 @@ handle_keypress(GtkWidget *widget, GdkEventKey *event, gpointer data) {
         else
             puts("Exec failed!");
     }
+    else if (event->keyval == GDK_Tab) {
+
+        return TRUE;
+    }
 
     return FALSE;
 }
@@ -209,18 +229,22 @@ int main(int argc, char **argv) {
 
     gtk_init(&argc, &argv);
 
+    fill_bin_list();
+
     /* Window widget */
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_size_request(window, 800, 10);
     gtk_container_set_border_width(GTK_CONTAINER(window), 0);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
-    bintree = gtk_list_store_new(1, G_TYPE_STRING);
+    bintree = gtk_list_store_new(1, G_TYPE_STRING, -1);
 
     gtk_list_store_append(bintree, &iter);
-    gtk_list_store_set(bintree, &iter, 0, "Test1");
+    gtk_list_store_set(bintree, &iter, 0, "xterm");
     gtk_list_store_append(bintree, &iter);
-    gtk_list_store_set(bintree, &iter, 0, "Test2");
+    gtk_list_store_set(bintree, &iter, 0, "chromium");
+    gtk_list_store_append(bintree, &iter);
+    gtk_list_store_set(bintree, &iter, -1, NULL);
 
     textcompletion = gtk_entry_completion_new();
     gtk_entry_completion_set_model(textcompletion, GTK_TREE_MODEL(bintree));
@@ -239,10 +263,7 @@ int main(int argc, char **argv) {
     g_signal_connect(window, "key-press-event", G_CALLBACK(handle_keypress), NULL);
 
     gtk_widget_show(GTK_WIDGET(textbox));
-    gtk_widget_show(GTK_WIDGET(textcompletion));
     gtk_widget_show_all(window);
-
-    fill_bin_list();
 
     gtk_main();
 
