@@ -225,6 +225,7 @@ text_exec(void) {
 }
 
 int main(int argc, char **argv) {
+    unsigned int i;
     GtkTreeIter iter;
 
     gtk_init(&argc, &argv);
@@ -239,12 +240,10 @@ int main(int argc, char **argv) {
 
     bintree = gtk_list_store_new(1, G_TYPE_STRING, -1);
 
-    gtk_list_store_append(bintree, &iter);
-    gtk_list_store_set(bintree, &iter, 0, "xterm");
-    gtk_list_store_append(bintree, &iter);
-    gtk_list_store_set(bintree, &iter, 0, "chromium");
-    gtk_list_store_append(bintree, &iter);
-    gtk_list_store_set(bintree, &iter, -1, NULL);
+    for (i = 0; binlist[i]; ++i) {
+        gtk_list_store_append(bintree, &iter);
+        gtk_list_store_set(bintree, &iter, 0, binlist[i]);
+    }
 
     textcompletion = gtk_entry_completion_new();
     gtk_entry_completion_set_model(textcompletion, GTK_TREE_MODEL(bintree));
