@@ -2,3 +2,4 @@
 -- History (left & right arrows?)
 -- Quit upon losing focus
 -- Alphabetical ordering for binary names
+-- Handle initial sizing gracefully
