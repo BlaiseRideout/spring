@@ -7,7 +7,7 @@ BINNAME		= spring
 .PHONY: clean install
 
 $(BINNAME): $(BINNAME).c
-	$(CC) $(CPPFLAGS) $(GTKCFLAGS) $(GTKLIBS) -o $@ $<
+	$(CC) $(CPPFLAGS) -o $@ $< $(GTKCFLAGS) $(GTKLIBS)
 	
 clean:
 	rm -vf $(BINNAME)
