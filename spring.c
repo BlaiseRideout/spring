@@ -65,6 +65,8 @@ fill_bin_list(void) {
     /* If we don't do this strtok modifies the environmental variable "PATH" in place and */
     /* messes up the program's ability to execute commands */
     ORIGPATH = getenv("PATH");
+    if (!ORIGPATH)
+        errout(1, "No environmental PATH variable set.");
     PATH = malloc(strlen(ORIGPATH) + 1);
     if (!PATH)
         errout(1, "Failed to allocate space for in-place PATH chopping.");
