@@ -77,11 +77,15 @@ fill_bin_list(void) {
     /* Once through is just for counting */
     for (i = 0; pathparts[i]; ++i) {
         d = opendir(pathparts[i]);
-        while ((dir = readdir(d))) {
-            /* If it is "." or ".." */
-            if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
-                continue;
-            bincount++;
+        if (!d)
+            fprintf(stderr, "Error reading files from path %s\n", pathparts[i]);
+        else {
+            while ((dir = readdir(d))) {
+                /* If it is "." or ".." */
+                if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
+                    continue;
+                bincount++;
+            }
         }
         closedir(d);
     }
@@ -94,16 +98,20 @@ fill_bin_list(void) {
     /* this time we allocate */
     for (i = 0, e = 0; pathparts[i]; ++i) {
         d = opendir(pathparts[i]);
-        while ((dir = readdir(d))) {
-            /* If it is "." or ".." */
-            if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
-                continue;
+        if (!d)
+            fprintf(stderr, "Error reading files from path %s\n", pathparts[i]);
+        else {
+            while ((dir = readdir(d))) {
+                /* If it is "." or ".." */
+                if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
+                    continue;
 
-            /* Logic for dealing with found folders */
-            binlist[e] = malloc(strlen(dir->d_name) + 1);
-            strcpy(binlist[e], dir->d_name);
+                /* Logic for dealing with found folders */
+                binlist[e] = malloc(strlen(dir->d_name) + 1);
+                strcpy(binlist[e], dir->d_name);
 
-            ++e;
+                ++e;
+            }
         }
         closedir(d);
     }
