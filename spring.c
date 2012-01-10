@@ -31,6 +31,7 @@ static GtkListStore *bintree;
 static char **binlist;
 
 static void cleanup(void);
+static void* ec_malloc(size_t size, char *msg);
 static void errout(int status, char *str);
 static void fill_bin_list(void);
 static gboolean handle_keypress(GtkWidget *widget, GdkEventKey *ev, gpointer data);
@@ -44,11 +45,22 @@ cleanup(void) {
     gtk_main_quit();
 }
 
+static void*
+ec_malloc(size_t size, char *msg) {
+    void *ptr = malloc(size);
+    if (ptr)
+        return ptr;
+    if (msg)
+        errout(1, msg);
+    errout(1, "In ec_malloc -- unable to allocate memory.");
+
+    return NULL;    /* Control should never reach this point */
+}
+
 static void
 errout(int status, char *str) {
     if (str)
         puts(str);
-
     exit(status);
 }
 
@@ -62,14 +74,13 @@ fill_bin_list(void) {
     unsigned int bincount = 0;
     int i, e;
     
-    /* If we don't do this strtok modifies the environmental variable "PATH" in place and */
-    /* messes up the program's ability to execute commands */
+    /* If we don't do this strtok modifies the environmental variable "PATH" */
+    /* in place and messes up the program's ability to execute commands */
     ORIGPATH = getenv("PATH");
     if (!ORIGPATH)
         errout(1, "No environmental PATH variable set.");
-    PATH = malloc(strlen(ORIGPATH) + 1);
-    if (!PATH)
-        errout(1, "Failed to allocate space for in-place PATH chopping.");
+    PATH = ec_malloc(strlen(ORIGPATH) + 1, "Failed t oallocate space for in-\
+                                                        place PATH chopping.");
     strcpy(PATH, ORIGPATH);
 
     pathparts = split_string(PATH, ":");
@@ -90,9 +101,8 @@ fill_bin_list(void) {
         closedir(d);
     }
 
-    binlist = malloc(sizeof(char*) * ++bincount);
-    if (!binlist)
-        errout(1, "Error allocating space for the binlist.");
+    binlist = ec_malloc(sizeof(char*) * ++bincount, "Error allocating space \
+                                                            for the binlist.");
     binlist[--bincount] = NULL;
 
     /* this time we allocate */
@@ -107,7 +117,7 @@ fill_bin_list(void) {
                     continue;
 
                 /* Logic for dealing with found folders */
-                binlist[e] = malloc(strlen(dir->d_name) + 1);
+                binlist[e] = ec_malloc(strlen(dir->d_name) + 1, NULL);
                 strcpy(binlist[e], dir->d_name);
 
                 ++e;
@@ -146,9 +156,8 @@ split_string(char *str, char *delim) {
     int i;
 
     numtok = tok_count(str, delim) + 1;
-    ret = malloc(sizeof(char*) * numtok);
-    if (!ret)
-        errout(1, "Error allocating space for tokens!");
+    ret = ec_malloc(sizeof(char*) * numtok, "Error allocating space for \
+                                                                    tokens!");
 
     ret[0] = strtok(str, delim);
     for (i = 1; i < numtok; ++i)
