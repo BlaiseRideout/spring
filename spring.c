@@ -79,8 +79,7 @@ fill_bin_list(void) {
     ORIGPATH = getenv("PATH");
     if (!ORIGPATH)
         errout(1, "No environmental PATH variable set.");
-    PATH = ec_malloc(strlen(ORIGPATH) + 1, "Failed t oallocate space for in-\
-                                                        place PATH chopping.");
+    PATH = ec_malloc(strlen(ORIGPATH) + 1, "Failed to allocate space for in-place PATH chopping.");
     strcpy(PATH, ORIGPATH);
 
     pathparts = split_string(PATH, ":");
@@ -101,8 +100,7 @@ fill_bin_list(void) {
         closedir(d);
     }
 
-    binlist = ec_malloc(sizeof(char*) * ++bincount, "Error allocating space \
-                                                            for the binlist.");
+    binlist = ec_malloc(sizeof(char*) * ++bincount, "Error allocating space for the binlist.");
     binlist[--bincount] = NULL;
 
     /* this time we allocate */
@@ -156,8 +154,7 @@ split_string(char *str, char *delim) {
     int i;
 
     numtok = tok_count(str, delim) + 1;
-    ret = ec_malloc(sizeof(char*) * numtok, "Error allocating space for \
-                                                                    tokens!");
+    ret = ec_malloc(sizeof(char*) * numtok, "Error allocating space for tokens!");
 
     ret[0] = strtok(str, delim);
     for (i = 1; i < numtok; ++i)
@@ -213,9 +210,7 @@ text_exec(void) {
 
     if (fork() == 0) {
         execvp(splitstring[0], splitstring);
-        printf("Execvp failed when attempting to launch ");
-        for (i = 0; splitstring[i]; ++i)
-            printf("%s ", splitstring[i]);
+        fprintf(stderr, "Execvp failed when attempting to launch ");
         puts("");
         exit(1);
     }
