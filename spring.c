@@ -200,7 +200,6 @@ static gboolean
 text_exec(void) {
     char *from_field;
     char **splitstring;
-    int i;
 
     from_field = (char*)gtk_entry_get_text(textbox);
     if (!from_field)
