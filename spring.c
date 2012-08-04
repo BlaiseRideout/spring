@@ -17,6 +17,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
+#include <pango/pango.h>
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -269,6 +270,11 @@ int main(int argc, char **argv) {
         gtk_widget_modify_base(GTK_WIDGET(textbox), GTK_STATE_NORMAL, &bg);
         fg = (GdkColor) {0, FG_RED, FG_GREEN, FG_BLUE};
         gtk_widget_modify_text(GTK_WIDGET(textbox), GTK_STATE_NORMAL, &fg);
+    }
+
+    /* Handle custom font */
+    if (strcmp(CUSTOM_FONT, "") != 0) {
+        gtk_widget_modify_font(GTK_WIDGET(textbox), pango_font_description_from_string(CUSTOM_FONT));
     }
 
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(textbox));

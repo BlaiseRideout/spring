@@ -12,3 +12,7 @@
 #define FG_RED      0xFFFF
 #define FG_GREEN    0xFFFF
 #define FG_BLUE     0xFFFF
+
+/* With CUSTOM FONT set to "", spring will automatically use your gtk font. */
+//#define CUSTOM_FONT = "Terminus 10"
+#define CUSTOM_FONT ""
