@@ -40,6 +40,8 @@ static char** split_string(char *str, char *delim);
 static gboolean text_exec(void);
 static int tok_count(char *str, char *delim);
 
+#include "spring.h"
+
 static void
 cleanup(void) {
     gtk_main_quit();
@@ -231,7 +233,7 @@ int main(int argc, char **argv) {
 
     /* Window widget */
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_widget_set_size_request(window, gdk_screen_get_width(gtk_window_get_screen(GTK_WINDOW(window))), 16);
+    gtk_widget_set_size_request(window, gdk_screen_get_width(gtk_window_get_screen(GTK_WINDOW(window))) * WIDTH_PERCENTAGE / 100, 16);
     gtk_container_set_border_width(GTK_CONTAINER(window), 0);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
@@ -261,7 +263,8 @@ int main(int argc, char **argv) {
     gtk_widget_show(GTK_WIDGET(textbox));
     gtk_widget_show_all(window);
 
-    gtk_window_move(GTK_WINDOW(window), 0, 0);
+	if (LOCK_TOP_LEFT)
+		gtk_window_move(GTK_WINDOW(window), 0, 0);
 
     gtk_main();
 

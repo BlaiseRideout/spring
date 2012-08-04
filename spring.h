@@ -1,0 +1,2 @@
+#define LOCK_TOP_LEFT 1
+#define WIDTH_PERCENTAGE 80
