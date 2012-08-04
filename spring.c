@@ -76,7 +76,7 @@ fill_bin_list(void) {
     struct dirent *dir;
     unsigned int bincount = 0;
     int i, e;
-    
+
     /* If we don't do this strtok modifies the environmental variable "PATH" */
     /* in place and messes up the program's ability to execute commands */
     ORIGPATH = getenv("PATH");
@@ -243,7 +243,6 @@ int main(int argc, char **argv) {
 
     gtk_container_set_border_width(GTK_CONTAINER(window), 0);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
-
     bintree = gtk_list_store_new(1, G_TYPE_STRING);
 
     for (i = 0; binlist[i]; ++i) {
@@ -261,6 +260,13 @@ int main(int argc, char **argv) {
     /* Text entry widget */
     textbox = GTK_ENTRY(gtk_entry_new());
     gtk_entry_set_completion(textbox, textcompletion);
+
+    GdkColor black = {0, 0x0000, 0x0000, 0x0000};
+    gtk_widget_modify_base(GTK_WIDGET(textbox), GTK_STATE_NORMAL, &black);
+
+    GdkColor white = {0, 0xFFFF, 0xFFFF, 0xFFFF};
+    gtk_widget_modify_text(GTK_WIDGET(textbox), GTK_STATE_NORMAL, &white);
+
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(textbox));
 
     /* Signal handling */
@@ -270,8 +276,8 @@ int main(int argc, char **argv) {
     gtk_widget_show(GTK_WIDGET(textbox));
     gtk_widget_show_all(window);
 
-	if (LOCK_TOP_LEFT)
-		gtk_window_move(GTK_WINDOW(window), 0, 0);
+    if (LOCK_TOP_LEFT)
+        gtk_window_move(GTK_WINDOW(window), 0, 0);
 
     gtk_main();
 
