@@ -227,6 +227,8 @@ text_exec(void) {
 int main(int argc, char **argv) {
     unsigned int i;
     GtkTreeIter iter;
+    GdkColor bg;
+    GdkColor fg;
 
     gtk_init(&argc, &argv);
 
@@ -261,11 +263,13 @@ int main(int argc, char **argv) {
     textbox = GTK_ENTRY(gtk_entry_new());
     gtk_entry_set_completion(textbox, textcompletion);
 
-    GdkColor black = {0, 0x0000, 0x0000, 0x0000};
-    gtk_widget_modify_base(GTK_WIDGET(textbox), GTK_STATE_NORMAL, &black);
-
-    GdkColor white = {0, 0xFFFF, 0xFFFF, 0xFFFF};
-    gtk_widget_modify_text(GTK_WIDGET(textbox), GTK_STATE_NORMAL, &white);
+    /* Custom color set handling */
+    if (CUSTOM_COLORS) {
+        bg = (GdkColor) {0, BG_RED, BG_GREEN, BG_BLUE};
+        gtk_widget_modify_base(GTK_WIDGET(textbox), GTK_STATE_NORMAL, &bg);
+        fg = (GdkColor) {0, FG_RED, FG_GREEN, FG_BLUE};
+        gtk_widget_modify_text(GTK_WIDGET(textbox), GTK_STATE_NORMAL, &fg);
+    }
 
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(textbox));
 
