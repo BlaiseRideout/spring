@@ -273,9 +273,8 @@ int main(int argc, char **argv) {
     }
 
     /* Handle custom font */
-    if (strcmp(CUSTOM_FONT, "") != 0) {
+    if (strcmp(CUSTOM_FONT, "") != 0)
         gtk_widget_modify_font(GTK_WIDGET(textbox), pango_font_description_from_string(CUSTOM_FONT));
-    }
 
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(textbox));
 
