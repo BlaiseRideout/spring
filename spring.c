@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <X11/extensions/Xinerama.h>
 
 static GtkWidget *window;
 static GtkEntry *textbox;
@@ -233,7 +234,13 @@ int main(int argc, char **argv) {
 
     /* Window widget */
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_widget_set_size_request(window, gdk_screen_get_width(gtk_window_get_screen(GTK_WINDOW(window))) * WIDTH_PERCENTAGE / 100, 16);
+
+    /* Clean window size handling from .h file */
+    if (WIDTH_PERCENTAGE)
+        gtk_widget_set_size_request(window, gdk_screen_get_width(gtk_window_get_screen(GTK_WINDOW(window))) * WIDTH_PERCENTAGE / 100, 16);
+    else
+        gtk_widget_set_size_request(window, gdk_screen_get_width(WIDTH_PIXELS, 16);
+
     gtk_container_set_border_width(GTK_CONTAINER(window), 0);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
 
