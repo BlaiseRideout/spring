@@ -4,7 +4,7 @@
 #define WIDTH_PERCENTAGE 0
 #define WIDTH_PIXELS 800
 
-/* Allows custom color sets */
+/* With CUSTOM_COLORS set to 0, spring will automatically use your gtk theme. */
 #define CUSTOM_COLORS 0
 #define BG_RED      0x0000
 #define BG_GREEN    0x0000
