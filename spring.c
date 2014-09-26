@@ -151,6 +151,13 @@ killevent(GtkWidget *widget, GtkWidget *ev, gpointer data) {
     return FALSE;
 }
 
+static gboolean
+lost_focus_event(GtkWidget *widget, GtkWidget *ev, gpointer data) {
+    cleanup();
+    exit(0);
+    return FALSE;
+}
+
 static char**
 split_string(char *str, char *delim) {
     char **ret;
@@ -281,6 +288,7 @@ int main(int argc, char **argv) {
     /* Signal handling */
     g_signal_connect(window, "delete-event", G_CALLBACK(killevent), NULL);
     g_signal_connect(window, "key-press-event", G_CALLBACK(handle_keypress), NULL);
+    g_signal_connect(window, "focus-out-event", G_CALLBACK(lost_focus_event), NULL);
 
     gtk_widget_show(GTK_WIDGET(textbox));
     gtk_widget_show_all(window);
